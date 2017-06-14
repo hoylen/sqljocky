@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v0.15.0
+-------
+* Updated dependency to allow more recent versions of crypto and mockito.
+
 v0.14.1
 -------
 * Fix the changelog formatting, so you can actually see what changed in v0.14.0
