@@ -8,6 +8,8 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:crypto/crypto.dart';
+import 'package:crypto/src/digest_sink.dart';
+
 import 'package:logging/logging.dart';
 
 import 'constants.dart';

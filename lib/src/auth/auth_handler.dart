@@ -22,18 +22,16 @@ class _AuthHandler extends _Handler {
     if (_password == null) {
       hash = <int>[];
     } else {
-      var hasher = new SHA1();
-      hasher.add(UTF8.encode(_password));
-      var hashedPassword = hasher.close();
+      var hashedPassword = sha1.convert(UTF8.encode(_password)).bytes;
 
-      hasher = new SHA1();
-      hasher.add(hashedPassword);
-      var doubleHashedPassword = hasher.close();
+      var doubleHashedPassword = sha1.convert(hashedPassword).bytes;
 
-      hasher = new SHA1();
-      hasher.add(_scrambleBuffer);
-      hasher.add(doubleHashedPassword);
-      var hashedSaltedPassword = hasher.close();
+      var sink = new DigestSink();
+      var s = sha1.startChunkedConversion(sink);
+      s.add(_scrambleBuffer);
+      s.add(doubleHashedPassword);
+      s.close();
+      var hashedSaltedPassword = sink.value.bytes;
 
       hash = new List<int>(hashedSaltedPassword.length);
       for (var i = 0; i < hash.length; i++) {
