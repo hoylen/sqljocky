@@ -1,6 +1,8 @@
 part of integrationtests;
 
 void runIntTests(String user, String password, String db, int port, String host) {
+  var log = new Logger("integration.runIntTests");
+
   ConnectionPool pool;
   group('some tests:', () {
     test('create pool', () {
@@ -32,9 +34,9 @@ void runIntTests(String user, String password, String db, int port, String host)
     test('show tables', () async {
       var c = new Completer();
       var results = await pool.query("show tables");
-      print("tables");
+      log.fine("tables");
       results.listen((row) {
-        print("table: $row");
+        log.fine("table: $row");
       }, onDone: () {
         c.complete();
       });
@@ -43,8 +45,8 @@ void runIntTests(String user, String password, String db, int port, String host)
 
     test('describe stuff', () async {
       var results = await pool.query("describe test1");
-      print("table test1");
-      await showResults(results);
+      log.fine("table test1");
+      await showResults(results, log);
     });
 
     test('small blobs', () async {
@@ -82,7 +84,7 @@ void runIntTests(String user, String password, String db, int port, String host)
     });
 
     test('insert stuff', () async {
-      print("insert stuff test");
+      log.fine("insert stuff test");
       var query = await pool.prepare("insert into test1 (atinyint, asmallint, amediumint, abigint, aint, "
           "adecimal, afloat, adouble, areal, "
           "aboolean, abit, aserial, "
@@ -136,10 +138,10 @@ void runIntTests(String user, String password, String db, int port, String host)
       values.add("a");
       values.add("a,b");
 
-      print("executing");
+      log.fine("executing");
       expect(1, equals(1)); // put some real expectations here
       var results = await query.execute(values);
-      print("updated ${results.affectedRows} ${results.insertId}");
+      log.fine("updated ${results.affectedRows} ${results.insertId}");
       expect(results.affectedRows, equals(1));
     });
 
@@ -178,19 +180,19 @@ void runIntTests(String user, String password, String db, int port, String host)
 
     test('data types (prepared)', () async {
       var results = await pool.prepareExecute('select * from test1', []);
-      print("----------- prepared results ---------------");
+      log.fine("----------- prepared results ---------------");
       preparedFields = results.fields;
       var list = await results.toList();
       values = list[0];
       for (var i = 0; i < results.fields.length; i++) {
         var field = results.fields[i];
-        print("${field.name} ${fieldTypeToString(field.type)} ${typeof(values[i])}");
+        log.fine("${field.name} ${fieldTypeToString(field.type)} ${typeof(values[i])}");
       }
     });
 
     test('data types (query)', () async {
       var results = await pool.query('select * from test1');
-      print("----------- query results ---------------");
+      log.fine("----------- query results ---------------");
       var list = await results.toList();
       var row = list[0];
       for (var i = 0; i < results.fields.length; i++) {
@@ -207,7 +209,7 @@ void runIntTests(String user, String password, String db, int port, String host)
         } else {
           expect(row[i], equals(values[i]));
         }
-        print("${field.name} ${fieldTypeToString(field.type)} ${typeof(row[i])}");
+        log.fine("${field.name} ${fieldTypeToString(field.type)} ${typeof(row[i])}");
       }
     });
 
@@ -221,7 +223,7 @@ void runIntTests(String user, String password, String db, int port, String host)
       }
       var resultList = await query.executeMulti(params);
       var end = new DateTime.now();
-      print(end.difference(start));
+      log.fine(end.difference(start));
       expect(resultList.length, equals(50));
       await trans.commit();
     });
@@ -264,15 +266,15 @@ void runIntTests(String user, String password, String db, int port, String host)
   });
 }
 
-Future showResults(Results results) {
+Future showResults(Results results, Logger log) {
   var c = new Completer();
   var fieldNames = <String>[];
   for (var field in results.fields) {
     fieldNames.add("${field.name}:${field.type}");
   }
-  print(fieldNames);
+  log.fine(fieldNames);
   results.listen((row) {
-    print(row);
+    log.fine(row);
   }, onDone: () {
     c.complete(null);
   });

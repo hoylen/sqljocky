@@ -95,6 +95,26 @@ Development
 To run the examples and tests, you'll need to create a 'connection.options' file by
 copying 'connection.options.example' and modifying the settings.
 
+Note: some of the tests will modify the database specified in the
+connection options file.  For example, creating tables in it.
+
+From the command line, [run the tests using
+pub](https://pub.dartlang.org/packages/test#running-tests). They can
+be run individually:
+
+```sh
+$ pub run test test/unit_test.dart
+$ pub run test test/interleave_test.dart
+$ pub run test test/integration_test.dart
+```
+
+It should be possible to run all the tests, but this currently does
+not work due to how the unit tests have been written.
+
+```sh
+$ pub run test  # this does not work yet
+```
+
 Licence
 -------
 
