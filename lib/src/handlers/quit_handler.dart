@@ -1,5 +1,6 @@
 part of sqljocky;
 
+/*
 class _QuitHandler extends _Handler {
   _QuitHandler() {
     log = new Logger("QuitHandler");
@@ -15,3 +16,4 @@ class _QuitHandler extends _Handler {
     throw new MySqlProtocolError._("Shouldn't have received a response after sending a QUIT message");
   }
 }
+*/

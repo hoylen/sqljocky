@@ -198,6 +198,9 @@ class Buffer {
         return readUint24();
       case 254:
         return readUint64();
+      default:
+        // MySQL specification does not define 255
+        throw new RangeError('length coded binary: unexpected value 255');
     }
   }
 
@@ -214,6 +217,7 @@ class Buffer {
     if (value < (2 << 63)) {
       return 5;
     }
+    throw new RangeError('measureLengthCodedBinary: unexpected value');
   }
 
   /**

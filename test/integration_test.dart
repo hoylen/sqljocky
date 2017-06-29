@@ -2,7 +2,7 @@ library integrationtests;
 
 import 'dart:async';
 import 'dart:typed_data';
-import 'package:args/args.dart';
+//import 'package:args/args.dart';
 import 'package:logging/logging.dart';
 import 'package:options_file/options_file.dart';
 import 'package:sqljocky/constants.dart';
@@ -25,7 +25,9 @@ part 'integration/stored_procedures.dart';
 part 'integration/stream.dart';
 part 'integration/two.dart';
 
-void main(List<String> args) {
+void main() {
+  const configFilename = 'connection.options';
+
   hierarchicalLoggingEnabled = true;
   Logger.root.level = Level.OFF;
 //  new Logger("ConnectionPool").level = Level.ALL;
@@ -42,16 +44,32 @@ void main(List<String> args) {
   };
   Logger.root.onRecord.listen(listener);
 
-  var parser = new ArgParser();
-  parser.addOption('large_packets', allowed: ['true', 'false'], defaultsTo: 'true');
-  var results = parser.parse(args);
+  //var parser = new ArgParser();
+  //parser.addOption('large_packets', allowed: ['true', 'false'], defaultsTo: 'true');
+  //var results = parser.parse(args);
 
-  var options = new OptionsFile('connection.options');
-  var user = options.getString('user');
-  var password = options.getString('password', null);
-  var port = options.getInt('port', 3306);
-  var db = options.getString('db');
-  var host = options.getString('host', 'localhost');
+  var host;
+  var port;
+  var db;
+  var user;
+  var password;
+
+  // Load database connection options from config file
+
+  var options = new OptionsFile(configFilename);
+  host = options.getString('host', 'localhost');
+  port = options.getInt('port', 3306);
+  db = options.getString('db');
+  user = options.getString('user');
+  password = options.getString('password');
+
+  test('config file is complete', () {
+    expect(db, isNotNull, reason: 'Config file missing "db": $configFilename');
+    expect(user, isNotNull,
+        reason: 'Config file missing "user": $configFilename');
+    expect(password, isNotNull,
+        reason: 'Config file missing "password": $configFilename');
+  });
 
   runPreparedQueryTests(user, password, db, port, host);
   runIntTests(user, password, db, port, host);

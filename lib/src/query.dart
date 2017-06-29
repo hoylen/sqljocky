@@ -109,6 +109,8 @@ class Query extends Object with _ConnectionHelpers {
       return results;
     } catch (e) {
       _releaseReuseThrow(preparedQuery.cnx, e);
+      assert(false); // should not get to here: _releaseReuseThrow always throws
+      return null; // to shut up warnings
     }
   }
 

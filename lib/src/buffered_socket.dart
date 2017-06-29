@@ -75,6 +75,8 @@ class BufferedSocket {
       return bufferedSocket;
     } catch (e) {
       onError(e);
+      assert(false); // should never get here: onError should throw exception
+      return null; // to shut up warnings
     }
   }
 

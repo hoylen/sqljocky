@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:io';
 
 import 'package:logging/logging.dart';
 import 'package:options_file/options_file.dart';
@@ -144,6 +145,8 @@ class Example {
 }
 
 void main() {
+  const configFilename = 'connection.options';
+
   hierarchicalLoggingEnabled = true;
   Logger.root.level = Level.OFF;
 //  new Logger("ConnectionPool").level = Level.ALL;
@@ -156,14 +159,33 @@ void main() {
   var log = new Logger("Interleave");
   log.level = Level.ALL;
 
+  var host;
+  var port;
+  var db;
+  var user;
+  var password;
+
+  setUp(() {
+    // Load database connection options from config file
+    try {
+      var options = new OptionsFile(configFilename);
+      host = options.getString('host', 'localhost');
+      port = options.getInt('port', 3306);
+      db = options.getString('db');
+      user = options.getString('user');
+      password = options.getString('password');
+
+      expect(db, isNotNull, reason: '$configFilename: missing "db"');
+      expect(user, isNotNull, reason: '$configFilename: missing "user"');
+      expect(password, isNotNull, reason: '$configFilename: missing "password"');
+
+    } on FileSystemException catch(e) {
+      fail("Connection options file: $e");
+    }
+  });
+
   group('interleave', () {
     test('should complete interleaved operations', () async {
-      var options = new OptionsFile('connection.options');
-      var user = options.getString('user');
-      var password = options.getString('password');
-      var port = options.getInt('port', 3306);
-      var db = options.getString('db');
-      var host = options.getString('host', 'localhost');
 
       // create a connection
       log.fine("opening connection");

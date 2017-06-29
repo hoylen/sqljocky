@@ -41,7 +41,10 @@ class MockSocket extends StreamView<RawSocketEvent> implements RawSocket {
 
   InternetAddress get address => null;
 
-  Future<RawSocket> close() {}
+  Future<RawSocket> close() async {
+    // pretend the socket is always, immediately, completely destroyed
+    return this;
+  }
 
   int get port => null;
 
@@ -53,11 +56,19 @@ class MockSocket extends StreamView<RawSocketEvent> implements RawSocket {
 
   int get remotePort => null;
 
-  bool setOption(SocketOption option, bool enabled) {}
+  bool setOption(SocketOption option, bool enabled) {
+    return true; // pretend option was set successfully
+  }
 
   void shutdown(SocketDirection direction) {}
 
-  int write(List<int> buffer, [int offset, int count]) {}
+  int write(List<int> buffer, [int offset, int count]) {
+    if (count != null) {
+      return count; // pretend requested number of bytes to write was written
+    } else {
+      return buffer.length; // pretend all of the buffer was written
+    }
+  }
 
   void set writeEventsEnabled(bool value) {
     if (value) {
@@ -181,7 +192,7 @@ void runBufferedSocketTests() {
       var onClosed = () {
         closed = true;
       };
-      var socket = await BufferedSocket.connect('localhost', 100,
+      var _ = await BufferedSocket.connect('localhost', 100,
           onDataReady: () {}, onDone: () {}, onError: (e) {}, onClosed: onClosed, socketFactory: factory);
       await rawSocket.closeRead();
       expect(closed, equals(true));

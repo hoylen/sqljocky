@@ -206,6 +206,8 @@ class ConnectionPool extends Object with _ConnectionHelpers implements Queriable
       return results;
     } catch (e) {
       _releaseReuseThrow(cnx, e);
+      assert(false); // should not get here: _releaseReuseThrow throws exception
+      return null; // to shut up warnings
     }
   }
 
@@ -313,6 +315,8 @@ class ConnectionPool extends Object with _ConnectionHelpers implements Queriable
       return new _TransactionImpl._(cnx, this);
     } catch (e) {
       _releaseReuseThrow(cnx, e);
+      assert(false); // should not get to here: _releaseReuseThrow should throw
+      return null; // to shut up warnings
     }
   }
 

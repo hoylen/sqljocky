@@ -1,6 +1,7 @@
 part of sqljocky;
 
 // not using this one yet
+/*
 class _ParameterPacket {
   int _type;
   int _flags;
@@ -19,3 +20,4 @@ class _ParameterPacket {
     _length = buffer.readUint32();
   }
 }
+*/

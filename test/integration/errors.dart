@@ -14,7 +14,7 @@ void runErrorTests(String user, String password, String db, int port, String hos
 //          useCompression: false,
           useSSL: true);
       var cnx = await pool.getConnection();
-      print("Connection secure: ${cnx.usingSSL}");
+      // print("Connection secure: ${cnx.usingSSL}");
       cnx.release();
       return setup(pool, "stream", "create table stream (id integer, name text)");
     });
