@@ -1,7 +1,7 @@
 Changelog
 =========
 
-v0.15.0
+v0.14.2
 -------
 * Updated dependency to allow more recent versions of crypto and mockito.
 * Removed deprecated SHA1 class in auth_handler.dart: for crypto >=1.0.0.
